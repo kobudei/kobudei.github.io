@@ -31,6 +31,8 @@ jobs:
       # 3. Set up Gradle
       - name: "⚙️ Setup Gradle"
         uses: gradle/actions/setup-gradle@v5
+        with:
+          gradle-version: 8.14.3
 
       # 4. Build the WasmJS App
       - name: "🛠️ Build WasmJS App"
@@ -44,7 +46,7 @@ jobs:
       - name: "📤 Upload GitHub Pages artifact"
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./website/composeApp/build/dist/wasmJs/productionExecutable
+          path: composeApp/build/dist/wasmJs/productionExecutable
 
       # 7. Deploy to GitHub Pages
       - name: "🚀 Deploy to GitHub Pages"

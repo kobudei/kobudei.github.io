@@ -1,3 +1,5 @@
+[![Deploy WasmJS App to GitHub Pages](https://github.com/kobudei/kobudei.github.io/actions/workflows/pipeline.yml/badge.svg)](https://github.com/kobudei/kobudei.github.io/actions/workflows/pipeline.yml)
+
 This is a Kotlin Multiplatform project targeting Web.
 
 * [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.

@@ -1,11 +1,8 @@
 package org.kobudei.website
 
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -19,7 +16,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -33,14 +29,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
@@ -49,18 +41,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.browser.window
+import kotlinx.coroutines.await
 import kotlinx.coroutines.delay
-
-private val DeepSpace = Color(0xFF050919)
-private val OrbitBlue = Color(0xFF0D1734)
-private val CardBase = Color(0xD9122142)
-private val CardInner = Color(0xE8182B54)
-private val ElectricCyan = Color(0xFF3FE7D0)
-private val NeonCoral = Color(0xFFFF6A7A)
-private val LaserBlue = Color(0xFF61A7FF)
-private val BrightText = Color(0xFFF2F6FF)
-private val SoftText = Color(0xFFC6D5FF)
-private val MutedText = Color(0xFF98ABD6)
+import org.w3c.fetch.Response
 
 private data class Metric(
     val value: String,
@@ -103,8 +87,54 @@ private val goals = listOf(
     ),
 )
 
+private const val MeetupSnapshotResource = "meetup-snapshot.properties"
+private val fallbackTopics = listOf(
+    "Open Source",
+    "Cloud Computing",
+    "Software Development",
+    "Data Science",
+)
+
+private data class MeetupSnapshot(
+    val groupName: String,
+    val city: String,
+    val country: String,
+    val timezone: String,
+    val foundedDate: String,
+    val organizer: String,
+    val members: Int?,
+    val upcomingEvents: Int?,
+    val topics: List<String>,
+    val description: String,
+    val updatedAt: String,
+    val sourceUrl: String,
+)
+
+private sealed interface MeetupSnapshotUiState {
+    data object Loading : MeetupSnapshotUiState
+    data class Ready(val snapshot: MeetupSnapshot) : MeetupSnapshotUiState
+    data class Error(val message: String) : MeetupSnapshotUiState
+}
+
 @Composable
 fun App() {
+    val meetupState by produceState<MeetupSnapshotUiState>(
+        initialValue = MeetupSnapshotUiState.Loading
+    ) {
+        while (true) {
+            value = runCatching { loadMeetupSnapshot() }
+                .fold(
+                    onSuccess = { MeetupSnapshotUiState.Ready(it) },
+                    onFailure = {
+                        MeetupSnapshotUiState.Error(
+                            message = it.message ?: "Could not load Meetup snapshot."
+                        )
+                    },
+                )
+            delay(60_000)
+        }
+    }
+
     MaterialTheme {
         val ambient = rememberInfiniteTransition(label = "ambient")
         val drift by ambient.animateFloat(
@@ -169,7 +199,8 @@ fun App() {
                 AnimatedSection(order = 3) { GoalsSection(pulse = pulse) }
                 AnimatedSection(order = 4) { ProgramSection(pulse = pulse) }
                 AnimatedSection(order = 5) { MentorshipSection(pulse = pulse) }
-                AnimatedSection(order = 6) { CtaSection(pulse = pulse) }
+                AnimatedSection(order = 6) { MeetupSnapshotSection(state = meetupState, pulse = pulse) }
+                AnimatedSection(order = 7) { CtaSection(pulse = pulse) }
                 Footer()
             }
         }
@@ -458,6 +489,227 @@ private fun MentorshipSection(pulse: Float) {
 }
 
 @Composable
+private fun MeetupSnapshotSection(
+    state: MeetupSnapshotUiState,
+    pulse: Float,
+) {
+    NeonPanel(pulse = pulse * 0.72f) {
+        SectionEyebrow(text = "Live Community Snapshot")
+        Text(
+            text = "Auto-updated from Meetup (refresh every 60s).",
+            color = SoftText,
+            style = MaterialTheme.typography.bodyLarge,
+        )
+
+        when (state) {
+            MeetupSnapshotUiState.Loading -> {
+                Text(
+                    text = "Syncing latest group data...",
+                    color = MutedText,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
+
+            is MeetupSnapshotUiState.Error -> {
+                Text(
+                    text = "Live sync failed: ${state.message}",
+                    color = NeonCoral,
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+                )
+                SnapshotDetails(
+                    snapshot = fallbackSnapshot(),
+                    isFallback = true,
+                )
+            }
+
+            is MeetupSnapshotUiState.Ready -> {
+                SnapshotDetails(
+                    snapshot = state.snapshot,
+                    isFallback = false,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SnapshotDetails(
+    snapshot: MeetupSnapshot,
+    isFallback: Boolean,
+) {
+    val location = "${snapshot.city}, ${snapshot.country.uppercase()}"
+    val membersText = snapshot.members?.toString() ?: "Unknown"
+    val eventsText = snapshot.upcomingEvents?.toString() ?: "Unknown"
+    val timezoneText = snapshot.timezone.ifBlank { "Unknown" }
+    val foundedText = snapshot.foundedDate.ifBlank { "Unknown" }
+    val topicsText = if (snapshot.topics.isEmpty()) "Unknown" else snapshot.topics.joinToString(", ")
+    val descriptionText = snapshot.description.ifBlank { "No description available." }
+
+    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+        val useRowLayout = maxWidth > 840.dp
+        if (useRowLayout) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                SnapshotStatCard("Group", snapshot.groupName, Modifier.weight(1f))
+                SnapshotStatCard("Members", membersText, Modifier.weight(1f))
+                SnapshotStatCard("Upcoming", eventsText, Modifier.weight(1f))
+            }
+        } else {
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                SnapshotStatCard("Group", snapshot.groupName)
+                SnapshotStatCard("Members", membersText)
+                SnapshotStatCard("Upcoming", eventsText)
+            }
+        }
+    }
+
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(18.dp),
+        color = CardBase.copy(alpha = 0.84f),
+        border = BorderStroke(1.dp, LaserBlue.copy(alpha = 0.42f)),
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                text = "Organizer: ${snapshot.organizer}",
+                color = BrightText,
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
+            )
+            Text(
+                text = "Location: $location",
+                color = SoftText,
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Text(
+                text = "Timezone: $timezoneText",
+                color = SoftText,
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Text(
+                text = "Founded: $foundedText",
+                color = SoftText,
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Text(
+                text = "Topics: $topicsText",
+                color = SoftText,
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Text(
+                text = descriptionText,
+                color = SoftText,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Text(
+                text = if (isFallback) {
+                    "Showing fallback snapshot. Source: ${snapshot.sourceUrl}"
+                } else {
+                    "Updated: ${snapshot.updatedAt} • Source: ${snapshot.sourceUrl}"
+                },
+                color = ElectricCyan,
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium),
+            )
+        }
+    }
+}
+
+@Composable
+private fun SnapshotStatCard(
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        color = CardBase.copy(alpha = 0.86f),
+        border = BorderStroke(1.dp, ElectricCyan.copy(alpha = 0.35f)),
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(
+                text = label,
+                color = ElectricCyan,
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium),
+            )
+            Text(
+                text = value,
+                color = BrightText,
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+            )
+        }
+    }
+}
+
+private suspend fun loadMeetupSnapshot(): MeetupSnapshot {
+    val cacheBustedResource = "$MeetupSnapshotResource?ts=${window.performance.now().toInt()}"
+    val response: Response = window.fetch(cacheBustedResource).await()
+    if (!response.ok) {
+        error("HTTP ${response.status.toInt()}")
+    }
+    val body: String = response.text().await()
+    return parseMeetupSnapshot(body)
+}
+
+private fun parseMeetupSnapshot(body: String): MeetupSnapshot {
+    val values = linkedMapOf<String, String>()
+    body.lineSequence()
+        .map { it.trim() }
+        .filter { it.isNotEmpty() && !it.startsWith("#") && it.contains("=") }
+        .forEach { line ->
+            val idx = line.indexOf('=')
+            if (idx > 0) {
+                values[line.substring(0, idx).trim()] = line.substring(idx + 1).trim()
+            }
+        }
+
+    val topics = values["topics"]
+        ?.split("|")
+        ?.map { it.trim() }
+        ?.filter { it.isNotEmpty() }
+        .orEmpty()
+
+    return MeetupSnapshot(
+        groupName = values["name"].orEmpty().ifBlank { "Kobudei" },
+        city = values["city"].orEmpty().ifBlank { "Bucharest" },
+        country = values["country"].orEmpty().ifBlank { "RO" },
+        timezone = values["timezone"].orEmpty(),
+        foundedDate = values["foundedDate"].orEmpty(),
+        organizer = values["organizer"].orEmpty().ifBlank { "Kobudei Team" },
+        members = values["members"]?.toIntOrNull(),
+        upcomingEvents = values["upcomingEvents"]?.toIntOrNull(),
+        topics = if (topics.isEmpty()) fallbackTopics else topics,
+        description = values["description"].orEmpty(),
+        updatedAt = values["updatedAt"].orEmpty().ifBlank { "Unknown" },
+        sourceUrl = values["sourceUrl"].orEmpty().ifBlank { "https://www.meetup.com/kobudei/" },
+    )
+}
+
+private fun fallbackSnapshot(): MeetupSnapshot {
+    return MeetupSnapshot(
+        groupName = "Kobudei",
+        city = "Bucharest",
+        country = "RO",
+        timezone = "",
+        foundedDate = "",
+        organizer = "Kobudei Team",
+        members = null,
+        upcomingEvents = null,
+        topics = fallbackTopics,
+        description = "",
+        updatedAt = "Unavailable",
+        sourceUrl = "https://www.meetup.com/kobudei/",
+    )
+}
+
+@Composable
 private fun CtaSection(pulse: Float) {
     NeonPanel(pulse = pulse) {
         SectionEyebrow(text = "Join Kobudei")
@@ -513,31 +765,7 @@ private fun AnimatedSection(
     order: Int,
     content: @Composable () -> Unit,
 ) {
-    var visible by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        delay(120L + order * 90L)
-        visible = true
-    }
-
-    val alpha by animateFloatAsState(
-        targetValue = if (visible) 1f else 0f,
-        animationSpec = tween(durationMillis = 650, easing = FastOutSlowInEasing),
-        label = "section-alpha-$order",
-    )
-    val shift by animateDpAsState(
-        targetValue = if (visible) 0.dp else 20.dp,
-        animationSpec = tween(durationMillis = 650, easing = FastOutSlowInEasing),
-        label = "section-shift-$order",
-    )
-
-    Box(
-        modifier = Modifier
-            .offset(y = shift)
-            .alpha(alpha)
-    ) {
-        content()
-    }
+    content()
 }
 
 @Composable

@@ -6,6 +6,8 @@ on:
     branches:
       - main  # Trigger the workflow on pushes to the main branch
   workflow_dispatch:  # Allow manual triggering
+  schedule:
+    - cron: "*/15 * * * *"  # Refresh snapshot every 15 minutes (UTC)
 
 permissions:
   contents: read  # Required to fetch the repository content
@@ -34,21 +36,25 @@ jobs:
         with:
           gradle-version: 8.14.3
 
-      # 4. Build the WasmJS App
+      # 4. Refresh Meetup snapshot (runtime data source)
+      - name: "📡 Refresh Meetup snapshot"
+        run: python3 scripts/fetch_meetup_snapshot.py --url https://www.meetup.com/kobudei/ --output composeApp/src/webMain/resources/meetup-snapshot.properties
+
+      # 5. Build the WasmJS App
       - name: "🛠️ Build WasmJS App"
         run: gradle :composeApp:wasmJsBrowserDistribution
 
-      # 5. Set up GitHub Pages
+      # 6. Set up GitHub Pages
       - name: "📄 Configure GitHub Pages"
         uses: actions/configure-pages@v5
 
-      # 6. Upload the built artifact to Pages
+      # 7. Upload the built artifact to Pages
       - name: "📤 Upload GitHub Pages artifact"
         uses: actions/upload-pages-artifact@v3
         with:
           path: composeApp/build/dist/wasmJs/productionExecutable
 
-      # 7. Deploy to GitHub Pages
+      # 8. Deploy to GitHub Pages
       - name: "🚀 Deploy to GitHub Pages"
         id: deployment
         uses: actions/deploy-pages@v4

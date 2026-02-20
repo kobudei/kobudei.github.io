@@ -103,3 +103,14 @@ canvas {
         opacity: 0.95;
     }
 }
+
+@media (prefers-reduced-motion: reduce) {
+    body::before,
+    body::after {
+        animation: none;
+    }
+
+    #boot-loader svg {
+        animation: none;
+    }
+}

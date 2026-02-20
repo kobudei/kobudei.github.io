@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,10 +32,10 @@ fun ContactButton(
     FilledTonalButton(
         modifier = modifier,
         shape = RoundedCornerShape(999.dp),
-        border = BorderStroke(1.dp, Color(0xFF3FE7D0)),
+        border = BorderStroke(1.dp, ElectricCyan),
         colors = ButtonDefaults.filledTonalButtonColors(
-            containerColor = Color(0x223FE7D0),
-            contentColor = Color(0xFFF2F6FF)
+            containerColor = ElectricCyan.copy(alpha = 0.14f),
+            contentColor = BrightText
         ),
         onClick = {
             openEmail(
@@ -49,7 +48,7 @@ fun ContactButton(
         Icon(
             painter = painterResource(Res.drawable.mail_24),
             contentDescription = "Send email",
-            tint = Color(0xFF3FE7D0)
+            tint = ElectricCyan
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(

@@ -16,9 +16,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.jetbrains.compose.resources.painterResource
-import website.composeapp.generated.resources.Kotlin_UG_logo
-import website.composeapp.generated.resources.Res
 
 
 @Composable
@@ -27,40 +24,12 @@ fun App() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0xFFFFF8EB),
-                            Color(0xFFF1F8F6),
-                            Color(0xFFE9F1FA)
-                        )
-                    )
-                )
+                .background(brush = backgroundGradient)
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp, vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Image(
-                    painter = painterResource(
-                        resource = Res.drawable.Kotlin_UG_logo
-                    ),
-                    contentDescription = null
-                )
-                Text(
-                    text = "Kobudei",
-                    color = Ink,
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 0.8.sp
-                    )
-                )
-                ContactButton(label = "Contact")
-            }
+            Header(title = "Kobudei", contactLabel = "Contact Us!")
 
             Spacer(modifier = Modifier.height(20.dp))
 

@@ -16,6 +16,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.resources.painterResource
+import website.composeapp.generated.resources.Kotlin_UG_logo
+import website.composeapp.generated.resources.Res
 
 
 @Composable
@@ -42,6 +45,12 @@ fun App() {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
+                Image(
+                    painter = painterResource(
+                        resource = Res.drawable.Kotlin_UG_logo
+                    ),
+                    contentDescription = null
+                )
                 Text(
                     text = "Kobudei",
                     color = Ink,

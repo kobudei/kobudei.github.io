@@ -1,5 +1,14 @@
 package org.kobudei.website
 
+import kotlinx.browser.window
+import org.w3c.dom.url.URLSearchParams
+
 actual fun openEmail(to: String, subject: String, body: String) {
-    TODO()
+    val params = URLSearchParams().apply {
+        append("subject", subject)
+        append("body", body)
+    }
+
+    val mailtoUrl = "mailto:$to?$params"
+    window.location.href = mailtoUrl
 }

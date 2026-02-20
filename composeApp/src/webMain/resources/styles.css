@@ -1,5 +1,12 @@
 :root {
-    color-scheme: light;
+    color-scheme: dark;
+    --bg-start: #050919;
+    --bg-mid: #0d1734;
+    --bg-end: #060914;
+    --accent-cyan: #3fe7d0;
+    --accent-coral: #ff6a7a;
+    --accent-blue: #61a7ff;
+    --text: #f2f6ff;
 }
 
 html, body {
@@ -8,16 +15,47 @@ html, body {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
-    background:
-        radial-gradient(circle at 15% 15%, rgba(255, 245, 220, 0.9) 0%, rgba(255, 245, 220, 0) 45%),
-        radial-gradient(circle at 85% 10%, rgba(211, 239, 231, 0.75) 0%, rgba(211, 239, 231, 0) 42%),
-        linear-gradient(180deg, #fff9ee 0%, #eef8f4 55%, #e6eef8 100%);
-    font-family: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
-    color: #1b2e3a;
 }
 
 body {
     position: relative;
+    background:
+        radial-gradient(circle at 20% 18%, rgba(63, 231, 208, 0.20) 0%, rgba(63, 231, 208, 0) 40%),
+        radial-gradient(circle at 82% 72%, rgba(255, 106, 122, 0.18) 0%, rgba(255, 106, 122, 0) 44%),
+        linear-gradient(180deg, var(--bg-start) 0%, var(--bg-mid) 52%, var(--bg-end) 100%);
+    color: var(--text);
+    font-family: "Space Grotesk", "Sora", "Avenir Next", sans-serif;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: -30vmax;
+    background:
+        repeating-linear-gradient(
+            120deg,
+            rgba(97, 167, 255, 0.05) 0,
+            rgba(97, 167, 255, 0.05) 1px,
+            transparent 1px,
+            transparent 32px
+        );
+    opacity: 0.6;
+    pointer-events: none;
+    z-index: 0;
+    animation: drift-grid 28s linear infinite;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    inset: -18%;
+    background:
+        radial-gradient(circle at 18% 12%, rgba(63, 231, 208, 0.26) 0%, rgba(63, 231, 208, 0) 42%),
+        radial-gradient(circle at 78% 68%, rgba(255, 106, 122, 0.20) 0%, rgba(255, 106, 122, 0) 46%),
+        radial-gradient(circle at 50% 22%, rgba(97, 167, 255, 0.18) 0%, rgba(97, 167, 255, 0) 42%);
+    pointer-events: none;
+    z-index: 0;
+    animation: pulse-cloud 12s ease-in-out infinite alternate;
 }
 
 #boot-loader {
@@ -25,17 +63,43 @@ body {
     inset: 0;
     display: grid;
     place-items: center;
-    background: transparent;
+    background: rgba(4, 8, 21, 0.92);
+    backdrop-filter: blur(6px);
     pointer-events: none;
     z-index: 9999;
 }
 
 #boot-loader svg {
-    width: 44px;
-    height: 44px;
-    opacity: 0.82;
+    width: 54px;
+    height: 54px;
+    opacity: 0.9;
+    filter: drop-shadow(0 0 16px rgba(63, 231, 208, 0.55));
 }
 
 canvas {
     display: block;
+    position: relative;
+    z-index: 1;
+    min-width: 100%;
+    min-height: 100%;
+}
+
+@keyframes drift-grid {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        transform: translate3d(80px, -95px, 0);
+    }
+}
+
+@keyframes pulse-cloud {
+    from {
+        transform: scale(1) rotate(0deg);
+        opacity: 0.72;
+    }
+    to {
+        transform: scale(1.14) rotate(6deg);
+        opacity: 0.95;
+    }
 }

@@ -116,6 +116,8 @@ fun App() {
             )
 
             Spacer(modifier = Modifier.height(12.dp))
+
+            WorkInProgressBanner()
         }
     }
 }

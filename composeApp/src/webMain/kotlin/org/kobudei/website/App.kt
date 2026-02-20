@@ -13,7 +13,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -157,18 +156,11 @@ fun App() {
 
             Spacer(modifier = Modifier.height(22.dp))
 
-            Text(
-                text = "kobudei.org",
-                color = Ember,
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
+            Footer(url = "kobudei.org",
+                copyright = "Copyright - 2026",
+                text = "Kotlin developers in Bucharest, building with passion."
             )
-            Text(
-                text = "Kotlin developers in Bucharest, building better software together.",
-                color = Color(0xFF4B6070),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodyMedium
-            )
+
             Spacer(modifier = Modifier.height(12.dp))
         }
     }

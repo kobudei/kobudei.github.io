@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppBar() {
+fun AppBar(title: String) {
     MaterialTheme {
         CenterAlignedTopAppBar(
             colors = TopAppBarDefaults.topAppBarColors(
@@ -14,7 +14,7 @@ fun AppBar() {
             ),
             title = {
                 Text(
-                    "Kobudei",
+                    title,
                     maxLines = 1
                 )
             },

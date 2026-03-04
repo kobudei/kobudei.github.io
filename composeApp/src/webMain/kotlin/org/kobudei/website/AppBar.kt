@@ -2,6 +2,9 @@ package org.kobudei.website
 
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import org.jetbrains.compose.resources.stringResource
+import website.composeapp.generated.resources.Res
+import website.composeapp.generated.resources.contact_us
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -19,7 +22,9 @@ fun AppBar(title: String) {
                 )
             },
             actions = {
-                ContactButton()
+                ContactButton(
+                    tooltipText = stringResource(Res.string.contact_us)
+                )
             },
             scrollBehavior = scrollBehavior(),
         )

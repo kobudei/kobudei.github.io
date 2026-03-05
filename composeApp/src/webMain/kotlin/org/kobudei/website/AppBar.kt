@@ -2,9 +2,12 @@ package org.kobudei.website
 
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import website.composeapp.generated.resources.Kotlin_UG_logo
 import website.composeapp.generated.resources.Res
 import website.composeapp.generated.resources.contact_us
+import website.composeapp.generated.resources.logo_description
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -20,6 +23,14 @@ fun AppBar(title: String) {
                     title,
                     maxLines = 1
                 )
+            },
+            navigationIcon = {
+                IconButton(onClick = {}) {
+                    Icon(
+                        painter = painterResource(Res.drawable.Kotlin_UG_logo),
+                        contentDescription = stringResource(Res.string.logo_description)
+                    )
+                }
             },
             actions = {
                 ContactButton(

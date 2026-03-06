@@ -1,13 +1,12 @@
 package org.kobudei.website
 
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
+import androidx.compose.material3.TooltipDefaults.rememberTooltipPositionProvider
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
-import website.composeapp.generated.resources.Res
-import website.composeapp.generated.resources.mail_24
+import org.jetbrains.compose.resources.stringResource
+import website.composeapp.generated.resources.*
 
 // commonMain
 expect fun openEmail(
@@ -16,20 +15,38 @@ expect fun openEmail(
     body: String
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContactButton() {
+fun ContactButton(tooltipText: String) {
     MaterialTheme {
-        FilledTonalButton(
-            onClick = {
-                openEmail(
-                    to = "contact@kobudei.org",
-                    subject = "Hello!",
-                    body = "Hello Kobudei community! My name is..."
+        TooltipBox(
+            positionProvider = rememberTooltipPositionProvider(
+                positioning = TooltipAnchorPosition.Above,
+                spacingBetweenTooltipAndAnchor = 4.dp),
+            tooltip = {
+                PlainTooltip {
+                    Text(tooltipText)
+                }
+            },
+            state = rememberTooltipState()
+        ) {
+            val subject = stringResource(Res.string.contact_mail_subject)
+            val body = stringResource(Res.string.contact_mail_body)
+
+            FilledIconButton(
+                onClick = {
+                    openEmail(
+                        to = "contact@kobudei.org",
+                        subject = subject,
+                        body = body
+                    )
+                }
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.mail_24),
+                    contentDescription = stringResource(Res.string.contact),
                 )
             }
-        ) {
-            Icon(painter = painterResource(Res.drawable.mail_24), null)
-            Text("Contact Us!")
         }
     }
 }

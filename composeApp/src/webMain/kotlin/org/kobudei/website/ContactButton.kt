@@ -1,22 +1,12 @@
 package org.kobudei.website
 
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PlainTooltip
-import androidx.compose.material3.Text
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
-import androidx.compose.material3.rememberTooltipState
+import androidx.compose.material3.*
+import androidx.compose.material3.TooltipDefaults.rememberTooltipPositionProvider
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import website.composeapp.generated.resources.Res
-import website.composeapp.generated.resources.contact
-import website.composeapp.generated.resources.contact_mail_body
-import website.composeapp.generated.resources.contact_mail_subject
-import website.composeapp.generated.resources.mail_24
+import website.composeapp.generated.resources.*
 
 // commonMain
 expect fun openEmail(
@@ -30,7 +20,9 @@ expect fun openEmail(
 fun ContactButton(tooltipText: String) {
     MaterialTheme {
         TooltipBox(
-            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+            positionProvider = rememberTooltipPositionProvider(
+                positioning = TooltipAnchorPosition.Above,
+                spacingBetweenTooltipAndAnchor = 4.dp),
             tooltip = {
                 PlainTooltip {
                     Text(tooltipText)
@@ -41,7 +33,7 @@ fun ContactButton(tooltipText: String) {
             val subject = stringResource(Res.string.contact_mail_subject)
             val body = stringResource(Res.string.contact_mail_body)
 
-            FilledTonalButton(
+            FilledIconButton(
                 onClick = {
                     openEmail(
                         to = "contact@kobudei.org",
@@ -52,7 +44,7 @@ fun ContactButton(tooltipText: String) {
             ) {
                 Icon(
                     painter = painterResource(Res.drawable.mail_24),
-                    contentDescription = stringResource(Res.string.contact)
+                    contentDescription = stringResource(Res.string.contact),
                 )
             }
         }

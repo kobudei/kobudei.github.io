@@ -1,7 +1,9 @@
 package org.kobudei.website
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import website.composeapp.generated.resources.Kotlin_UG_logo
@@ -14,9 +16,10 @@ import website.composeapp.generated.resources.logo_description
 fun AppBar(title: String) {
     MaterialTheme {
         CenterAlignedTopAppBar(
+            contentPadding = PaddingValues(start = 12.dp, end = 12.dp),
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary,
+                containerColor = MaterialTheme.colorScheme.primary,
+                titleContentColor = MaterialTheme.colorScheme.onPrimary,
             ),
             title = {
                 Text(
@@ -28,7 +31,8 @@ fun AppBar(title: String) {
                 IconButton(onClick = {}) {
                     Icon(
                         painter = painterResource(Res.drawable.Kotlin_UG_logo),
-                        contentDescription = stringResource(Res.string.logo_description)
+                        contentDescription = stringResource(Res.string.logo_description),
+                        tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             },

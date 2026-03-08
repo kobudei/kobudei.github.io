@@ -3,6 +3,7 @@ package org.kobudei.website
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -28,7 +29,10 @@ fun AppBar(title: String) {
                 )
             },
             navigationIcon = {
-                IconButton(onClick = {}) {
+                val uriHandler = LocalUriHandler.current
+                IconButton(onClick = {
+                    uriHandler.openUri("https://kotlinlang.org/community/user-groups/")
+                }) {
                     Icon(
                         painter = painterResource(Res.drawable.Kotlin_UG_logo),
                         contentDescription = stringResource(Res.string.logo_description),

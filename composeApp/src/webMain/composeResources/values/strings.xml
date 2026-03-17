@@ -7,4 +7,5 @@
     <string name="contact_mail_body">Hello Kobudei community! My name is...</string>
     <string name="logo_description">Kobudei Logo</string>
     <string name="meetup_logo_description">Kobudei Logo</string>
+    <string name="github_logo_description">Github Logo</string>
 </resources>

@@ -25,7 +25,7 @@ fun AppBar(title: String) {
                 )
             },
             navigationIcon = {
-                AppBarIcon()
+                AppBarIcon("Kotlin User Groups")
             },
             actions = {
                 ContactButton(

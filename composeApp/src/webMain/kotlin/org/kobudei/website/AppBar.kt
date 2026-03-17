@@ -31,6 +31,7 @@ fun AppBar(title: String) {
                 ContactButton(
                     tooltipText = stringResource(Res.string.contact_us)
                 )
+                MeetupButton("Find us on meetup!")
             },
             scrollBehavior = scrollBehavior(),
         )

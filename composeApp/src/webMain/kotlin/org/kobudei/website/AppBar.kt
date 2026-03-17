@@ -25,14 +25,14 @@ fun AppBar(title: String) {
                 )
             },
             navigationIcon = {
-                AppBarIcon("Find other Kotlin User Groups")
+                AppBarIcon()
             },
             actions = {
                 ContactButton(
                     tooltipText = stringResource(Res.string.contact_us)
                 )
-                MeetupButton("Find us on meetup!")
-                GithubButton("Github")
+                MeetupButton()
+                GithubButton()
             },
             scrollBehavior = scrollBehavior(),
         )

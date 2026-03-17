@@ -10,32 +10,18 @@ import org.jetbrains.compose.resources.stringResource
 import website.composeapp.generated.resources.Kotlin_UG_logo
 import website.composeapp.generated.resources.Res
 import website.composeapp.generated.resources.logo_description
+import website.composeapp.generated.resources.meetup_logo
+import website.composeapp.generated.resources.meetup_logo_description
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppBarIcon(tooltipText: String) {
+fun AppBarIcon(tooltipText: String = "Find other Kotlin User Groups") {
     MaterialTheme {
-        TooltipBox(
-            positionProvider = rememberTooltipPositionProvider(
-                positioning = TooltipAnchorPosition.Above,
-                spacingBetweenTooltipAndAnchor = 4.dp),
-            tooltip = {
-                PlainTooltip {
-                    Text(tooltipText)
-                }
-            },
-            state = rememberTooltipState()
-        ) {
-            val uriHandler = LocalUriHandler.current
-            IconButton(onClick = {
-                uriHandler.openUri("https://kotlinlang.org/community/user-groups/")
-            }) {
-                Icon(
-                    painter = painterResource(Res.drawable.Kotlin_UG_logo),
-                    contentDescription = stringResource(Res.string.logo_description),
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
-            }
-        }
+        TooltipIconButton(
+            tooltipText = tooltipText,
+            icon = Res.drawable.Kotlin_UG_logo,
+            description = Res.string.logo_description,
+            url = "https://kotlinlang.org/community/user-groups/"
+        )
     }
 }

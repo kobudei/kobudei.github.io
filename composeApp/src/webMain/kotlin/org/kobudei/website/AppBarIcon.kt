@@ -1,21 +1,17 @@
 package org.kobudei.website
 
-import androidx.compose.material3.*
-import androidx.compose.material3.TooltipDefaults.rememberTooltipPositionProvider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import website.composeapp.generated.resources.Kotlin_UG_logo
 import website.composeapp.generated.resources.Res
+import website.composeapp.generated.resources.find_other_kugs
 import website.composeapp.generated.resources.logo_description
-import website.composeapp.generated.resources.meetup_logo
-import website.composeapp.generated.resources.meetup_logo_description
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppBarIcon(tooltipText: String = "Find other Kotlin User Groups") {
+fun AppBarIcon(tooltipText: String = stringResource(Res.string.find_other_kugs)) {
     MaterialTheme {
         TooltipIconButton(
             tooltipText = tooltipText,

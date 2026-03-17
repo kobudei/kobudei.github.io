@@ -4,9 +4,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.resources.stringResource
-import website.composeapp.generated.resources.Res
-import website.composeapp.generated.resources.contact_us
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,9 +25,7 @@ fun AppBar(title: String) {
                 AppBarIcon()
             },
             actions = {
-                ContactButton(
-                    tooltipText = stringResource(Res.string.contact_us)
-                )
+                ContactButton()
                 MeetupButton()
                 GithubButton()
             },

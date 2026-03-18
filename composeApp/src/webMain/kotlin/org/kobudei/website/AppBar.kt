@@ -4,12 +4,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.stringResource
-import website.composeapp.generated.resources.Kotlin_UG_logo
-import website.composeapp.generated.resources.Res
-import website.composeapp.generated.resources.contact_us
-import website.composeapp.generated.resources.logo_description
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,18 +22,12 @@ fun AppBar(title: String) {
                 )
             },
             navigationIcon = {
-                IconButton(onClick = {}) {
-                    Icon(
-                        painter = painterResource(Res.drawable.Kotlin_UG_logo),
-                        contentDescription = stringResource(Res.string.logo_description),
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
+                AppBarIcon()
             },
             actions = {
-                ContactButton(
-                    tooltipText = stringResource(Res.string.contact_us)
-                )
+                ContactButton()
+                MeetupButton()
+                GithubButton()
             },
             scrollBehavior = scrollBehavior(),
         )

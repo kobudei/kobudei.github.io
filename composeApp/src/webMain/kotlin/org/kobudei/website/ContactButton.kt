@@ -17,7 +17,7 @@ expect fun openEmail(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContactButton(tooltipText: String) {
+fun ContactButton(tooltipText: String = stringResource(Res.string.contact_us)) {
     MaterialTheme {
         TooltipBox(
             positionProvider = rememberTooltipPositionProvider(

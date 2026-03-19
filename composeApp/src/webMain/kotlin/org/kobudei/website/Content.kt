@@ -1,13 +1,11 @@
 package org.kobudei.website
 
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.*
 import org.jetbrains.compose.resources.stringResource
 import website.composeapp.generated.resources.Res
 import website.composeapp.generated.resources.work_in_progress
@@ -18,6 +16,7 @@ fun Content(padding: PaddingValues) {
         LazyColumn(
             modifier = Modifier.consumeWindowInsets(padding),
             contentPadding = padding,
+            verticalArrangement = Arrangement.SpaceAround
         ) {
             item {
                 WorkInProgressBar("___${stringResource(Res.string.work_in_progress)}___")
@@ -26,20 +25,12 @@ fun Content(padding: PaddingValues) {
                 Text("Lorem Ipsum")
             }
             item {
-                Text(
-                    buildAnnotatedString {
-                        append("Website made with ")
-                        withLink(
-                            LinkAnnotation.Url(
-                                "https://kotlinlang.org/compose-multiplatform/",
-                                TextLinkStyles(style = SpanStyle(color = MaterialTheme.colorScheme.onSurfaceVariant))
-                            )
-                        ) {
-                            append("Compose Multiplatform ")
-                        }
-                        append("""<3""")
-                    }
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    MadeWithMessage()
+                }
             }
         }
     }

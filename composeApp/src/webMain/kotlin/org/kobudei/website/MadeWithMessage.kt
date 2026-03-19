@@ -1,11 +1,8 @@
 package org.kobudei.website
 
-import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -14,9 +11,8 @@ import androidx.compose.ui.text.style.TextDecoration
 fun MadeWithMessage() {
     MaterialTheme {
         Text(
-            modifier = Modifier.background(Color.Cyan),
             text = buildAnnotatedString {
-                append("Website made with ")
+                append("Website built with ")
                 withLink(
                     LinkAnnotation.Url(
                         "https://kotlinlang.org/compose-multiplatform/",
@@ -40,9 +36,9 @@ fun MadeWithMessage() {
                         )
                     )
                 ) {
-                    append("Compose Multiplatform ")
+                    append("Compose Multiplatform")
                 }
-                append("""<3""")
+                append(""" <3""")
             }
         )
     }

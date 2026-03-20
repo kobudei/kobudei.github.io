@@ -11,4 +11,5 @@
     <string name="find_on_github">Find us on GitHub!</string>
     <string name="find_on_meetup">Find us on meetup!</string>
     <string name="find_other_kugs">Find other Kotlin User Groups</string>
+    <string name="built_with">Website built with</string>
 </resources>

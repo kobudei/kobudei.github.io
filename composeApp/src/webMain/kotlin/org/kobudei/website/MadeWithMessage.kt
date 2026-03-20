@@ -6,33 +6,34 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import org.jetbrains.compose.resources.stringResource
+import website.composeapp.generated.resources.Res
+import website.composeapp.generated.resources.built_with
+
 
 @Composable
 fun MadeWithMessage() {
     MaterialTheme {
+        val defaultStyle = SpanStyle(
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        val interactionStyle = defaultStyle.copy(
+            textDecoration = TextDecoration.Underline
+        )
+        val pressedStyle = interactionStyle.copy(
+            fontWeight = FontWeight.Bold,
+        )
         Text(
             text = buildAnnotatedString {
-                append("Website built with ")
+                append(stringResource(Res.string.built_with))
                 withLink(
                     LinkAnnotation.Url(
                         "https://kotlinlang.org/compose-multiplatform/",
                         styles = TextLinkStyles(
-                            style = SpanStyle(
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            ),
-                            hoveredStyle = SpanStyle(
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                textDecoration = TextDecoration.Underline
-                            ),
-                            focusedStyle = SpanStyle(
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                textDecoration = TextDecoration.Underline
-                            ),
-                            pressedStyle = SpanStyle(
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                fontWeight = FontWeight.Bold,
-                                textDecoration = TextDecoration.Underline
-                            )
+                            style = defaultStyle,
+                            hoveredStyle = interactionStyle,
+                            focusedStyle = interactionStyle,
+                            pressedStyle = pressedStyle
                         )
                     )
                 ) {

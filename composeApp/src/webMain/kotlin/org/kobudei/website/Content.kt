@@ -1,7 +1,6 @@
 package org.kobudei.website
 
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -17,12 +16,21 @@ fun Content(padding: PaddingValues) {
         LazyColumn(
             modifier = Modifier.consumeWindowInsets(padding),
             contentPadding = padding,
+            verticalArrangement = Arrangement.SpaceAround
         ) {
             item {
                 WorkInProgressBar("___${stringResource(Res.string.work_in_progress)}___")
             }
             item {
                 Text("Lorem Ipsum")
+            }
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    MadeWithMessage()
+                }
             }
         }
     }

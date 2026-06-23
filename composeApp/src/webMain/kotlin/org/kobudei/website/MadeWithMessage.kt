@@ -37,9 +37,8 @@ fun MadeWithMessage() {
                         )
                     )
                 ) {
-                    append(" Compose Multiplatform")
+                    append("Compose Multiplatform")
                 }
-                append(""" <3""")
             }
         )
     }

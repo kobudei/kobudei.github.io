@@ -11,5 +11,11 @@
     <string name="find_on_github">Find us on GitHub!</string>
     <string name="find_on_meetup">Find us on meetup!</string>
     <string name="find_other_kugs">Find other Kotlin User Groups</string>
-    <string name="built_with">Website built with</string>
+    <string name="built_with">️️Proudly built with </string>
+    <string-array name="description">
+        <item>Kobudei is the Kotlin User Group for developers in Bucharest.</item>
+        <item>We organize events for technical presentations, open discussions regarding the many ways Kotlin has improved the community's approach to delivering concise, reliable and fast software.</item>
+        <item>Our intended purpose is to cover all areas regarding Kotlin's ecosystem: Syntax, targeted platforms, performance, community support and feedback as well as migration steps.</item>
+        <item>We wish to reach out to any who are interested to participate in any way, whether it be a tech talk, a training session or perhaps a local uni course.</item>
+    </string-array>
 </resources>

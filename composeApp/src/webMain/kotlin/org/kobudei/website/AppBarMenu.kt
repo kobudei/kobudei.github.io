@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -28,39 +27,23 @@ fun AppBarMenu() {
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            val uriHandler = LocalUriHandler.current
+            AppBarMenuItem(
+                text = "GitHub",
+                icon = Res.drawable.github_logo,
+                description = Res.string.github_logo_description,
+                url = "https://github.com/kobudei",
+            ) {
+                expanded = false
+            }
 
-            DropdownMenuItem(
-                text = { Text("GitHub") },
-                onClick = {
-                    expanded = false
-                    uriHandler.openUri("https://github.com/kobudei")
-                },
-                leadingIcon = {
-                    Icon(
-                        painter = painterResource(Res.drawable.github_logo),
-                        contentDescription = stringResource(Res.string.github_logo_description),
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(24.dp),
-                    )
-                }
-            )
-
-            DropdownMenuItem(
-                text = { Text("Meetup") },
-                onClick = {
-                    expanded = false
-                    uriHandler.openUri("https://www.meetup.com/kobudei/")
-                },
-                leadingIcon = {
-                    Icon(
-                        painter = painterResource(Res.drawable.meetup_logo),
-                        contentDescription = stringResource(Res.string.meetup_logo_description),
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(24.dp),
-                    )
-                }
-            )
+            AppBarMenuItem(
+                text = "Meetup",
+                icon = Res.drawable.meetup_logo,
+                description = Res.string.meetup_logo_description,
+                url = "https://www.meetup.com/kobudei/",
+            ) {
+                expanded = false
+            }
 
             val subject = stringResource(Res.string.contact_mail_subject)
             val body = stringResource(Res.string.contact_mail_body)

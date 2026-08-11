@@ -2,11 +2,19 @@ package org.kobudei.website
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.*
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
+import androidx.window.core.layout.WindowSizeClass
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppBar(title: String) {
+fun AppBar(
+    title: String,
+    windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
+) {
+    val showMenu = !windowSizeClass
+        .isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+
     MaterialTheme {
         CenterAlignedTopAppBar(
             contentPadding = PaddingValues(
@@ -27,9 +35,13 @@ fun AppBar(title: String) {
                 AppBarIcon()
             },
             actions = {
-                ContactButton()
-                MeetupButton()
-                GithubButton()
+                if (showMenu) {
+                    AppBarMenu()
+                } else {
+                    ContactButton()
+                    MeetupButton()
+                    GithubButton()
+                }
             },
             scrollBehavior = scrollBehavior(),
         )

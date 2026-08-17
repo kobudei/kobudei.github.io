@@ -3,12 +3,16 @@ package org.kobudei.website
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.*
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.datetime.LocalDateTime
@@ -26,9 +30,15 @@ import kotlin.time.Instant
 fun Content(padding: PaddingValues) {
     MaterialTheme {
         LazyColumn(
-            modifier = Modifier.consumeWindowInsets(padding),
-            contentPadding = padding,
-            verticalArrangement = Arrangement.SpaceAround
+            modifier = Modifier
+                .fillMaxSize()
+                .consumeWindowInsets(padding),
+            contentPadding = PaddingValues(
+                top = padding.calculateTopPadding() + 24.dp,
+                bottom = padding.calculateBottomPadding() + 32.dp,
+            ),
+            verticalArrangement = Arrangement.spacedBy(28.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // wip
             item {
@@ -39,38 +49,23 @@ fun Content(padding: PaddingValues) {
             item {
                 val paragraphs = stringArrayResource(Res.array.description)
 
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.TopCenter
-                ) {
-                    //surface
-                    Surface(
-                        modifier = Modifier
-                            .widthIn(max = 950.dp)
-                            .padding(24.dp),
-                        shape = RoundedCornerShape(24.dp),
-                        tonalElevation = 2.dp,
+                SectionSurface {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(18.dp)
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .widthIn(max = 850.dp)
-                                .padding(32.dp),
-                            verticalArrangement = Arrangement.spacedBy(20.dp)
-                        ) {
-                            if (paragraphs.isNotEmpty()) {
-                                Text(
-                                    text = paragraphs.first(),
-                                    style = MaterialTheme.typography.headlineSmall
-                                )
+                        if (paragraphs.isNotEmpty()) {
+                            Text(
+                                text = paragraphs.first(),
+                                style = MaterialTheme.typography.headlineSmall
+                            )
 
-                                paragraphs.drop(1).forEach {
-                                    Text(
-                                        text = it,
-                                        style = MaterialTheme.typography.bodyLarge.copy(
-                                            lineHeight = 30.sp
-                                        )
+                            paragraphs.drop(1).forEach { paragraph ->
+                                Text(
+                                    text = paragraph,
+                                    style = MaterialTheme.typography.bodyLarge.copy(
+                                        lineHeight = 30.sp
                                     )
-                                }
+                                )
                             }
                         }
                     }
@@ -79,12 +74,17 @@ fun Content(padding: PaddingValues) {
 
             // upcoming events
             item {
-                EventsCard(title = "Upcoming Events", events = getUpcomingEvents())
+                EventsSection(
+                    title = "Upcoming Events",
+                    events = getUpcomingEvents()
+                )
             }
 
-            // past events
             item {
-                EventsCard(title = "Previous Events", events = getPreviousEvents())
+                EventsSection(
+                    title = "Previous Events",
+                    events = getPreviousEvents()
+                )
             }
 
             // mwm
@@ -179,4 +179,310 @@ fun getUpcomingEvents(): List<Event> {
 fun getPreviousEvents(): List<Event> {
     val currentMoment: Instant = Clock.System.now()
     return Events.filter { it.date < currentMoment.toLocalDateTime(TimeZone.currentSystemDefault()) }
+}
+
+@Composable
+private fun SectionSurface(
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .widthIn(max = 1000.dp)
+            .padding(horizontal = 24.dp),
+        shape = RoundedCornerShape(28.dp),
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        tonalElevation = 1.dp
+    ) {
+        Column(
+            modifier = Modifier.padding(32.dp),
+            content = content
+        )
+    }
+}
+
+@Composable
+private fun EventsSection(
+    title: String,
+    events: List<Event>
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .widthIn(max = 1000.dp)
+            .padding(horizontal = 24.dp),
+        verticalArrangement = Arrangement.spacedBy(18.dp)
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.headlineMedium
+        )
+
+        if (events.isEmpty()) {
+            EmptyEventsCard()
+        } else {
+            events.forEach { event ->
+                EventCard(event)
+            }
+        }
+    }
+}
+
+@Composable
+private fun EventCard(
+    event: Event
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(24.dp),
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        tonalElevation = 2.dp
+    ) {
+        Column(
+            modifier = Modifier.padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                verticalAlignment = Alignment.Top
+            ) {
+                EventDateBadge(event.date)
+
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Text(
+                        text = event.title,
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+
+                    Text(
+                        text = formatEventDate(event.date),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    Text(
+                        text = event.location.name,
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+
+                    event.location.address?.let { address ->
+                        Text(
+                            text = address,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+
+            HorizontalDivider()
+
+            event.talks.forEach { talk ->
+                TalkCard(talk)
+            }
+
+            event.eventUrl?.let {
+                EventLink(
+                    text = "View event",
+                    url = it
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun EventDateBadge(
+    date: LocalDateTime
+) {
+    Surface(
+        shape = RoundedCornerShape(18.dp),
+        color = MaterialTheme.colorScheme.primaryContainer
+    ) {
+        Column(
+            modifier = Modifier
+                .width(72.dp)
+                .padding(vertical = 12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = date.month.name
+                    .take(3)
+                    .uppercase(),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+
+            Text(
+                text = date.day.toString(),
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+
+            Text(
+                text = date.year.toString(),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+        }
+    }
+}
+
+@Composable
+private fun TalkCard(
+    talk: Talk
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Text(
+            text = talk.title,
+            style = MaterialTheme.typography.titleLarge
+        )
+
+        talk.summary?.let { summary ->
+            Text(
+                text = summary,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                lineHeight = 24.sp
+            )
+        }
+
+        if (talk.speakers.isNotEmpty()) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "Presented by",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                talk.speakers.forEach { speaker ->
+                    SpeakerRow(speaker)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SpeakerRow(
+    speaker: Speaker
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Surface(
+            modifier = Modifier.size(44.dp),
+            shape = RoundedCornerShape(50),
+            color = MaterialTheme.colorScheme.secondaryContainer
+        ) {
+            Box(
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = speaker.name
+                        .split(" ")
+                        .take(2)
+                        .mapNotNull { it.firstOrNull()?.uppercase() }
+                        .joinToString(""),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+            }
+        }
+
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            Text(
+                text = speaker.name,
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            Text(
+                text = speaker.bio,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+@Composable
+private fun EmptyEventsCard() {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        color = MaterialTheme.colorScheme.surfaceContainerLow
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(40.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "No events to display",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+private fun formatEventDate(
+    date: LocalDateTime
+): String {
+    val month = date.month.name
+        .lowercase()
+        .replaceFirstChar { it.uppercase() }
+
+    val hour = date.hour.toString().padStart(2, '0')
+    val minute = date.minute.toString().padStart(2, '0')
+
+    return "$month ${date.day}, ${date.year} · $hour:$minute"
+}
+
+@Composable
+private fun EventLink(
+    text: String,
+    url: String
+) {
+    val defaultStyle = SpanStyle(
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+    val interactionStyle = defaultStyle.copy(
+        textDecoration = TextDecoration.Underline
+    )
+    val pressedStyle = interactionStyle.copy(
+        fontWeight = FontWeight.Bold,
+    )
+    Text(
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.primary,
+        text = buildAnnotatedString {
+            withLink(
+                LinkAnnotation.Url(
+                    url = url,
+                    styles = TextLinkStyles(
+                        style = defaultStyle,
+                        hoveredStyle = interactionStyle,
+                        focusedStyle = interactionStyle,
+                        pressedStyle = pressedStyle
+                    )
+                )
+            ) {
+                append(text)
+            }
+        }
+    )
 }

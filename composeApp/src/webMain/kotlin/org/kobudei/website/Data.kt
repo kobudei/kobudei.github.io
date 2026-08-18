@@ -48,10 +48,11 @@ fun getPreviousEvents(clock: Clock = Clock.System): List<Event> =
 
 private fun filterEvents(
     clock: Clock,
+    events: List<Event> = emptyList(),
     predicate: (Event, LocalDateTime) -> Boolean
 ): List<Event> {
     val currentMoment: Instant = clock.now()
     val timezone = TimeZone.currentSystemDefault()
     val currentLocalDateTime = currentMoment.toLocalDateTime(timezone)
-    return Events.filter { event -> predicate(event, currentLocalDateTime) }
+    return events.filter { event -> predicate(event, currentLocalDateTime) }
 }

@@ -9,6 +9,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.*
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalDateTime
 
@@ -49,10 +52,33 @@ fun EventCard(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
 
+                        val defaultStyle = SpanStyle(
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        val interactionStyle = defaultStyle.copy(
+                            textDecoration = TextDecoration.Underline
+                        )
+                        val pressedStyle = interactionStyle.copy(
+                            fontWeight = FontWeight.Bold,
+                        )
                         Text(
-                            text = event.location.name,
                             style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.primary,
+                            text = buildAnnotatedString {
+                                withLink(
+                                    LinkAnnotation.Url(
+                                        url = event.location.url,
+                                        styles = TextLinkStyles(
+                                            style = defaultStyle,
+                                            hoveredStyle = interactionStyle,
+                                            focusedStyle = interactionStyle,
+                                            pressedStyle = pressedStyle
+                                        )
+                                    )
+                                ) {
+                                    append(event.location.name)
+                                }
+                            }
                         )
 
                         event.location.address?.let { address ->

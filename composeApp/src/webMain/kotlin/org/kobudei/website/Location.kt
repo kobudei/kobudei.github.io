@@ -6,8 +6,11 @@ data class Location(
     val url: String,
 ) {
     companion object {
-        val QuatreSH = Location("4SH", "4SH, Le Haillan", "https://4sh.fr")
         val AD01 =
-            Location("AD/01", "Bucharest, 165 Splaiul Unirii, Timpuri Noi Square, Building O3B", "https://ad01.com")
+            Location(
+                name = "AD/01",
+                address = "Bucharest, 165 Splaiul Unirii, Timpuri Noi Square, Building O3B",
+                url = "https://ad01.com"
+            )
     }
 }

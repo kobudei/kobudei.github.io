@@ -1,15 +1,23 @@
 package org.kobudei.website
 
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.*
 import kotlin.time.Clock
 import kotlin.time.Instant
 
 val Events = listOf(
     Event(
         title = "Hello World!",
-        date = LocalDateTime.parse("2026-09-23T17:30:00"),
+        date = LocalDateTime(
+            date = LocalDate(
+                year = 2026,
+                month = 9,
+                day = 23,
+            ),
+            time = LocalTime(
+                hour = 17,
+                minute = 30,
+            )
+        ),
         location = Location.AD01,
         eventUrl = "https://www.meetup.com/kobudei",
         talks = listOf(

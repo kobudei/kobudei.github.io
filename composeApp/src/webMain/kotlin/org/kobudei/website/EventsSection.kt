@@ -28,9 +28,7 @@ fun EventsSection(
             if (events.isEmpty()) {
                 EmptyEventsCard()
             } else {
-                events.forEach { event ->
-                    EventCard(event)
-                }
+                events.forEach { EventCard(it) }
             }
         }
     }

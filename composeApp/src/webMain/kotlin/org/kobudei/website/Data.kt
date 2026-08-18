@@ -18,6 +18,11 @@ val Events = listOf(
                 speakers = listOf(Speaker.ViorelAlexandrescu),
                 summary = "A demonstration of how http4k can be a viable alternative to other backend building technologies"
             ),
+            Talk(
+                title = "WORA, Take Two",
+                speakers = listOf(Speaker.ViorelAlexandrescu),
+                summary = "Compose Multiplatform demo, showcasing how effective it can be at building applications destined to work on the most popular platforms."
+            ),
         )
     )
 ).sortedBy { it.date }

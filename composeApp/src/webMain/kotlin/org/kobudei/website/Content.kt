@@ -33,10 +33,7 @@ fun Content(padding: PaddingValues) {
             modifier = Modifier
                 .fillMaxSize()
                 .consumeWindowInsets(padding),
-            contentPadding = PaddingValues(
-                top = padding.calculateTopPadding() + 24.dp,
-                bottom = padding.calculateBottomPadding() + 32.dp,
-            ),
+            contentPadding = padding,
             verticalArrangement = Arrangement.spacedBy(28.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
